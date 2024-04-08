@@ -35,7 +35,6 @@ public class StatsClient {
             path.append("&uris=").append(uri);
         }
         path.append("&unique=").append(unique);
-
         try {
             return restTemplate.getForEntity(path.toString(), Object.class);
         } catch (HttpStatusCodeException e) {

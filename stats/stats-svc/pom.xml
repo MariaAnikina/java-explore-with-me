@@ -8,7 +8,9 @@
 		<artifactId>stats</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+
 	<artifactId>stats-svc</artifactId>
+
 	<name>Statistics service</name>
 	<description>Statistics service for Explore with me app</description>
 

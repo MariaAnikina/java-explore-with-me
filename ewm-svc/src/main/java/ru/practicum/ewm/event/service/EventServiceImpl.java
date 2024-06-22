@@ -178,9 +178,8 @@ public class EventServiceImpl implements EventService {
                     );
             }
         }
-        if(updateRequest.getParticipantLimit() != null && updateRequest.getParticipantLimit() < 0) {
+        if (updateRequest.getParticipantLimit() != null && updateRequest.getParticipantLimit() < 0)
             throw new EventBadException("ParticipantLimit не может быть отрицательным");
-        }
         log.info("Инициатором обновлено событие {}", event);
         return eventToFullDto(eventRepository.save(event), 0, 0L);
     }

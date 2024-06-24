@@ -84,19 +84,23 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 eventId
         );
         ParticipationRequestStatus status = updateRequest.getStatus();
-        if (status.equals(ParticipationRequestStatus.REJECTED)) {
-            for (ParticipationRequest request : requests)
-                request.setStatus(ParticipationRequestStatus.REJECTED);
-        } else if (status.equals(ParticipationRequestStatus.CONFIRMED)) {
-            int size = requests.size();
-            for (int i = 0; (i < vacant && i < size); i++)
-                requests.get(i).setStatus(ParticipationRequestStatus.CONFIRMED);
-            if (size > vacant)
-                for (int i = vacant; i < size; i++)
-                    requests.get(i).setStatus(ParticipationRequestStatus.REJECTED);
-        } else throw new OperationConditionsFailureException(
-                "Некорректный статус в заявке на изменение статусов запросов на участие"
-        );
+        switch (status) {
+            case REJECTED:
+                for (ParticipationRequest request : requests)
+                    request.setStatus(ParticipationRequestStatus.REJECTED);
+                break;
+            case CONFIRMED:
+                int size = requests.size();
+                for (int i = 0; (i < vacant && i < size); i++)
+                    requests.get(i).setStatus(ParticipationRequestStatus.CONFIRMED);
+                if (size > vacant)
+                    for (int i = vacant; i < size; i++)
+                        requests.get(i).setStatus(ParticipationRequestStatus.REJECTED);
+                break;
+            default: throw new OperationConditionsFailureException(
+                    "Некорректный статус в заявке на изменение статусов запросов на участие"
+            );
+        }
         requestStorage.saveAll(requests);
         List<ParticipationRequestDto> confirmedRequests = new ArrayList<>();
         List<ParticipationRequestDto> rejectedRequests = new ArrayList<>();

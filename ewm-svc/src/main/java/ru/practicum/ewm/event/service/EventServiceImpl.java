@@ -16,9 +16,9 @@ import ru.practicum.ewm.client.StatsClient;
 import ru.practicum.ewm.dto.EndpointHitDto;
 import ru.practicum.ewm.dto.ViewStatsDto;
 import ru.practicum.ewm.event.model.ActionState;
+import ru.practicum.ewm.event.model.Coordinate;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.EventState;
-import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.event.model.SortType;
 import ru.practicum.ewm.event.model.dto.EventFullDto;
 import ru.practicum.ewm.event.model.dto.EventShortDto;
@@ -29,6 +29,8 @@ import ru.practicum.ewm.event.storage.EventRepository;
 import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequestStatus;
 import ru.practicum.ewm.participationrequest.storage.ParticipationRequestRepository;
+import ru.practicum.ewm.location.model.Location;
+import ru.practicum.ewm.location.storage.LocationRepository;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.storage.UserRepository;
 
@@ -52,6 +54,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ParticipationRequestRepository requestStorage;
+    private final LocationRepository locationRepository;
     private final StatsClient statsClient;
 
     @Override
@@ -149,7 +152,7 @@ public class EventServiceImpl implements EventService {
                 updateRequest.getAnnotation(),
                 updateRequest.getCategory(),
                 updateRequest.getDescription(),
-                updateRequest.getLocation(),
+                updateRequest.getCoordinate(),
                 updateRequest.getPaid(),
                 updateRequest.getParticipantLimit(),
                 updateRequest.getRequestModeration(),
@@ -265,7 +268,7 @@ public class EventServiceImpl implements EventService {
                 updateRequest.getAnnotation(),
                 updateRequest.getCategory(),
                 updateRequest.getDescription(),
-                updateRequest.getLocation(),
+                updateRequest.getCoordinate(),
                 updateRequest.getPaid(),
                 updateRequest.getParticipantLimit(),
                 updateRequest.getRequestModeration(),
@@ -299,12 +302,36 @@ public class EventServiceImpl implements EventService {
         return eventToFullDto(eventRepository.save(event), 0, 0L);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getEventsInLocation(Integer locationId, Integer from, Integer size) {
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new LocationNotFoundException("Локация с id=" + locationId + " не найдена"));
+        log.info("Запрошен список событий в локации с id={}", locationId);
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("eventDate"));
+        return eventRepository.findEventsInLocation(
+                        location.getLat(),
+                        location.getLon(),
+                        location.getRadius(),
+                        pageable
+                ).stream()
+                .map(
+                        event -> eventToShortDto(
+                                event,
+                                getConfirmed(event),
+                                getViews(event)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
     private void updateEvent(
             Event event,
             String annotation,
             Integer catId,
             String description,
-            Location location,
+            Coordinate coordinate,
             Boolean paid,
             Integer participantLimit,
             Boolean requestModeration,
@@ -317,9 +344,9 @@ public class EventServiceImpl implements EventService {
             event.setCategory(category);
         }
         if (description != null) event.setDescription(description);
-        if (location != null) {
-            event.setLat(location.getLat());
-            event.setLon(location.getLon());
+        if (coordinate != null) {
+            event.setLat(coordinate.getLat());
+            event.setLon(coordinate.getLon());
         }
         if (paid != null) event.setPaid(paid);
         if (participantLimit != null) event.setParticipantLimit(participantLimit);

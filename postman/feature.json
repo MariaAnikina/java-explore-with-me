@@ -892,7 +892,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"annotation\": \"test\",\r\n  \"category\": 1,\r\n  \"description\": \"test\",\r\n  \"eventDate\": \"2025-01-08 14:00:00\",\r\n  \"location\": {\r\n    \"lat\": 0.00001,\r\n    \"lon\": 0.00001\r\n  },\r\n  \"paid\": false,\r\n  \"participantLimit\": 10,\r\n  \"requestModeration\": true,\r\n  \"title\": \"birthday\"\r\n}",
+					"raw": "{\r\n  \"annotation\": \"aaaaaaaaaaaaaaaaaaaaaaa\",\r\n  \"category\": 1,\r\n  \"description\": \"ddddddddddddddddddddddd\",\r\n  \"eventDate\": \"2025-01-08 14:00:00\",\r\n  \"location\": {\r\n    \"lat\": 0.00001,\r\n    \"lon\": 0.00001\r\n  },\r\n  \"paid\": false,\r\n  \"participantLimit\": 10,\r\n  \"requestModeration\": true,\r\n  \"title\": \"birthday\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

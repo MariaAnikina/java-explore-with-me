@@ -6,10 +6,10 @@ import ru.practicum.ewm.event.model.Coordinate;
 
 @Data
 public class LocationFullDto {
-    private final int id;
-    private final String name;
-    private final String description;
-    @JsonProperty("location")
-    private final Coordinate coordinate;
-    private final double radius;
+	private final int id;
+	private final String name;
+	private final String description;
+	@JsonProperty("location")
+	private final Coordinate coordinate;
+	private final double radius;
 }

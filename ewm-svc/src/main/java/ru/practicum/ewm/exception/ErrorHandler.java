@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ErrorHandler {
     @ExceptionHandler({ConstraintViolationException.class, MissingServletRequestParameterException.class,
-            MethodArgumentNotValidException.class, EventDateException.class, EventBadException.class})
+            MethodArgumentNotValidException.class, EventDateException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleBadRequest(Exception e) {
         log.error(e.getMessage());
@@ -30,7 +30,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({CategoryAlreadyExistsException.class, UserAlreadyExistsException.class,
-            ParticipationRequestAlreadyExistsException.class, CompilationAlreadyExistsException.class})
+            ParticipationRequestAlreadyExistsException.class, CompilationAlreadyExistsException.class,
+            LocationAlreadyExistsException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleDataIntegrityViolationException(RuntimeException e) {
         log.error(e.getMessage());
@@ -57,7 +58,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({CategoryNotFoundException.class, UserNotFoundException.class, EventNotFoundException.class,
-            ParticipationRequestNotFoundException.class, CompilationNotFoundException.class})
+            ParticipationRequestNotFoundException.class, CompilationNotFoundException.class,
+            LocationNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleNotFoundException(RuntimeException e) {
         log.error(e.getMessage());
